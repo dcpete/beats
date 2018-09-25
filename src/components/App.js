@@ -79,7 +79,8 @@ class App extends Component {
       <div>
         <main>
           <div className="container">
-            <FormGroup>
+            <FormGroup row className="align-items-end">
+              <Col xs='4'>
               <Label for="bpm">bpm</Label>
               <Input
                 name="bpm"
@@ -92,40 +93,46 @@ class App extends Component {
                     ? this.setState({ bpm: event.target.value })
                     : event.preventDefault();
                 }}
-              />
-              <Label for="numberOfBeats">beats</Label>
-              <Input
-                name="numberOfBeats"
-                type="text"
-                value={this.state.numberOfBeats}
-                disabled={this.state.isPlaying}
-                onChange={event => {
-                  const val = parseInt(event.target.value);
-                  !val || Number.isInteger(val)
-                    ? this.setState({ numberOfBeats: event.target.value })
-                    : event.preventDefault();
-                }}
-              />
-              <Button
-                onClick={() => {
-                  if (this.state.isPlaying) {
-                    this.handleCleanup();
-                    this.setState({ isPlaying: false })
-                  }
-                  else if (this.state.bpm) {
-                    const activeBeat = [];
-                    activeBeat[this.state.numberOfBeats - 1] = null;
-                    activeBeat[0] = true;
-                    this.setState({
-                      isPlaying: true,
-                      intervalId: setInterval(this.handleInterval, 60000 / this.state.bpm),
-                      activeBeat
-                    });
-                  }
-                }}
-              >
-                {this.state.isPlaying ? "Stop" : "Start"}
-              </Button>
+                />
+              </Col>
+              <Col xs='4'>
+                <Button
+                  block
+                  onClick={() => {
+                    if (this.state.isPlaying) {
+                      this.handleCleanup();
+                      this.setState({ isPlaying: false })
+                    }
+                    else if (this.state.bpm) {
+                      const activeBeat = [];
+                      activeBeat[this.state.numberOfBeats - 1] = null;
+                      activeBeat[0] = true;
+                      this.setState({
+                        isPlaying: true,
+                        intervalId: setInterval(this.handleInterval, 60000 / this.state.bpm),
+                        activeBeat
+                      });
+                    }
+                  }}
+                >
+                  {this.state.isPlaying ? "Stop" : "Start"}
+                </Button>
+              </Col>
+              <Col xs='4'>
+                <Label for="numberOfBeats">beats</Label>
+                <Input
+                  name="numberOfBeats"
+                  type="text"
+                  value={this.state.numberOfBeats}
+                  disabled={this.state.isPlaying}
+                  onChange={event => {
+                    const val = parseInt(event.target.value);
+                    !val || Number.isInteger(val)
+                      ? this.setState({ numberOfBeats: event.target.value })
+                      : event.preventDefault();
+                  }}
+                />
+              </Col>
             </FormGroup>
             <Row className="no-gutters">
               {this.renderBeats(this.state.numberOfBeats)}

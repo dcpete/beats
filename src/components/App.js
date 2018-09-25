@@ -89,7 +89,7 @@ class App extends Component {
                 onChange={event => {
                   const val = parseInt(event.target.value);
                   !val || (Number.isInteger(val) && val <= this.state.maxBpm)
-                    ? this.setState({ bpm: val })
+                    ? this.setState({ bpm: event.target.value })
                     : event.preventDefault();
                 }}
               />
@@ -102,7 +102,7 @@ class App extends Component {
                 onChange={event => {
                   const val = parseInt(event.target.value);
                   !val || Number.isInteger(val)
-                    ? this.setState({ numberOfBeats: val })
+                    ? this.setState({ numberOfBeats: event.target.value })
                     : event.preventDefault();
                 }}
               />

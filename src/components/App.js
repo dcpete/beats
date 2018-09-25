@@ -1,25 +1,71 @@
 import React, { Component } from 'react';
-import { Col, Row } from 'reactstrap';
+import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 import Beat from './Beat';
 
 class App extends Component {
   constructor() {
     super();
+    this.handleBeatClick = this.handleBeatClick.bind(this);
+    this.handleCleanup = this.handleCleanup.bind(this);
+    this.handleInterval = this.handleInterval.bind(this);
 
     this.state = {
-      numberOfBeats: 8
+      bpm: 120,
+      maxBpm: 600,
+      numberOfBeats: 24,
+      beatState: [],
+      beatColors: [
+        'secondary',
+        'info',
+        'warning'
+      ],
+      intervalId: undefined,
+      activeBeat: []
     }
   }
+
+  handleCleanup() {
+    this.state.intervalId && clearInterval(this.state.intervalId);
+  }
+
+  componentDidMount(){
+    window.addEventListener('beforeunload', this.handleCleanup);
+  }
+
+  componentWillUnmount() {
+    this.handleCleanup();
+    window.removeEventListener('beforeunload', this.handleCleanup);
+}
+
+  handleBeatClick(index) {
+    const beatState = this.state.beatState.slice();
+    beatState[index] = index < beatState.length && beatState[index]
+      ? (beatState[index] + 1) % this.state.beatColors.length
+      : 1
+    this.setState({ beatState });
+  }
+
+  handleInterval() {
+    this.setState({
+      activeBeat: this.state.activeBeat.slice(-1).concat(this.state.activeBeat.slice(0, -1))
+    })
+  }
   
-  renderBeats(numberOfBeats) {
+  renderBeats() {
+    const { numberOfBeats, beatState, beatColors } = this.state;
     const beatArray = [];
     for (var i = 0; i < numberOfBeats; i++) {
+      const color = i < beatState.length
+        ? beatColors[beatState[i]]
+        : beatColors[0];
+      const active = this.state.isPlaying && this.state.activeBeat[i];
       beatArray.push(
         <Col xs='3' md='2' className="square">
           <Beat
-            color="secondary"
-            onClick={() => { }}
+            color={color}
+            onClick={this.handleBeatClick}
+            active={active}
             beatNumber={i + 1}
           />
         </Col>
@@ -31,14 +77,56 @@ class App extends Component {
   render() {
     return (
       <div>
-        <header>
-          <div className="container">
-            beats
-          </div>
-        </header>
         <main>
           <div className="container">
-            main window
+            <FormGroup>
+              <Label for="bpm">bpm</Label>
+              <Input
+                name="bpm"
+                type="text"
+                value={this.state.bpm}
+                disabled={this.state.isPlaying}
+                onChange={event => {
+                  const val = parseInt(event.target.value);
+                  !val || (Number.isInteger(val) && val <= this.state.maxBpm)
+                    ? this.setState({ bpm: val })
+                    : event.preventDefault();
+                }}
+              />
+              <Label for="numberOfBeats">beats</Label>
+              <Input
+                name="numberOfBeats"
+                type="text"
+                value={this.state.numberOfBeats}
+                disabled={this.state.isPlaying}
+                onChange={event => {
+                  const val = parseInt(event.target.value);
+                  !val || Number.isInteger(val)
+                    ? this.setState({ numberOfBeats: val })
+                    : event.preventDefault();
+                }}
+              />
+              <Button
+                onClick={() => {
+                  if (this.state.isPlaying) {
+                    this.handleCleanup();
+                    this.setState({ isPlaying: false })
+                  }
+                  else if (this.state.bpm) {
+                    const activeBeat = [];
+                    activeBeat[this.state.numberOfBeats - 1] = null;
+                    activeBeat[0] = true;
+                    this.setState({
+                      isPlaying: true,
+                      intervalId: setInterval(this.handleInterval, 60000 / this.state.bpm),
+                      activeBeat
+                    });
+                  }
+                }}
+              >
+                {this.state.isPlaying ? "Stop" : "Start"}
+              </Button>
+            </FormGroup>
             <Row className="no-gutters">
               {this.renderBeats(this.state.numberOfBeats)}
             </Row>

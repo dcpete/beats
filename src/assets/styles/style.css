@@ -14,3 +14,7 @@
   width: 99%;
   height: 99%;
 }
+
+.btn.content {
+  transition: none;
+}

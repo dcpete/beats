@@ -8,7 +8,8 @@ const Beat = (props) => {
         block
         className="content"
         color={props.color}
-        onClick={props.onClick}
+        active={props.active}
+        onClick={() => { props.onClick(props.beatNumber - 1) }}
       >
         {props.beatNumber}
       </Button>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Col } from 'reactstrap';
-import Sound from 'react-sound';
 
 const Beat = (props) => {
   return (
@@ -14,10 +13,6 @@ const Beat = (props) => {
       >
         {props.beatNumber}
       </Button>
-      <Sound
-        url={props.audio}
-        playStatus={props.active ? Sound.status.PLAYING : Sound.status.STOPPED}
-      />
     </div>
   )
 }

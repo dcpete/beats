@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 import Beat from './Beat';
+import HighBeat from '../assets/audio/high.wav';
+import LowBeat from '../assets/audio/low.wav';
 
 class App extends Component {
   constructor() {
@@ -19,6 +21,11 @@ class App extends Component {
         'secondary',
         'info',
         'warning'
+      ],
+      beatAudio: [
+        null,
+        HighBeat,
+        LowBeat
       ],
       intervalId: undefined,
       activeBeat: []
@@ -53,17 +60,21 @@ class App extends Component {
   }
   
   renderBeats() {
-    const { numberOfBeats, beatState, beatColors } = this.state;
+    const { numberOfBeats, beatState, beatColors, beatAudio } = this.state;
     const beatArray = [];
     for (var i = 0; i < numberOfBeats; i++) {
       const color = i < beatState.length
         ? beatColors[beatState[i]]
         : beatColors[0];
+      const audio = i < beatState.length
+        ? beatAudio[beatState[i]]
+        : beatAudio[0];
       const active = this.state.isPlaying && this.state.activeBeat[i];
       beatArray.push(
         <Col xs='3' md='2' className="square">
           <Beat
             color={color}
+            audio={audio}
             onClick={this.handleBeatClick}
             active={active}
             beatNumber={i + 1}
